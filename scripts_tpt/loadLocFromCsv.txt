@@ -1,0 +1,53 @@
+define job load_location_from_csv
+description 'Load Loc.csv to the Location table'
+(
+    define schema location_schema
+    (
+        LocID       varchar(30),
+        LocTypeCD   varchar(30),
+        LocLC       varchar(30),
+        LocLL       varchar(30),
+        RegGeoCD    varchar(30),
+        TypoFCD     varchar(30),
+        TPCompar    varchar(30),
+        TypAffCD    varchar(30),
+        TypTvaCD    varchar(30),
+        MeoTkDT     varchar(30),
+        OuvertureDT varchar(30),
+        FermetureDT varchar(30),
+        SOCICD      varchar(30)
+    );
+
+    define operator file_reader
+    type dataconnector producer
+    schema location_schema
+    attributes
+    (
+        varchar FileName = 'Loc.csv',
+        varchar Format = 'delimited',
+        varchar TextDelimiter = ';'
+    );
+
+    define operator load_location
+    type load
+    schema location_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar TargetTable = 'PRDW.Location',
+        varchar LogTable = 'PRDW.Log_Location'
+    );
+
+    apply ('insert into PRDW.Location(
+            LocID, LocTypeCD, LocLC, LocLL, RegGeoCD, TypoFCD, TPCompar,
+            TypAffCD, TypTvaCD, MeoTkDT, OuvertureDT, FermetureDT, SOCICD)
+        values(:locid, :loctypecd, :loclc, :locll, :reggeocd, :typofcd,
+            :tpcompar, :typaffcd, :typtvacd, :meotkdt, :ouverturedt,
+            :fermeturedt, :socicd);')
+    to operator (load_location[1])
+
+    select LocID, LocTypeCD, LocLC, LocLL, RegGeoCD, TypoFCD, TPCompar,
+        TypAffCD, TypTvaCD, MeoTkDT, OuvertureDT, FermetureDT, SOCICD
+    from operator (file_reader[1]);
+);
