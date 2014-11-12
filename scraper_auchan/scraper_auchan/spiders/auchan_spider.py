@@ -24,7 +24,8 @@ class AuchanSpider(CrawlSpider):
             item['name'] = sel \
                     .xpath('//span[@class="titre-principal"]/text()') \
                     .extract()
-            item['desc'] = sel.xpath('//span[@class="titre-annexe"]/text()') \
+            item['desc'] = sel \
+                    .xpath('//span[@class="titre-annexe"]/text()') \
                     .extract()
             item['price'] = sel \
                     .xpath('//div[@class="prix-actuel"]/span/text()') \
