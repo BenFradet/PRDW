@@ -1,0 +1,54 @@
+define job load_private_from_csv
+description 'Load private.csv to the Vente table'
+(
+    define schema ventes_schema
+    (
+        LOCID       varchar(30),
+        TPVID       varchar(30),
+        TKNUM       varchar(30),
+        TKDT        varchar(30),
+        TKHR        varchar(30),
+        PAYMCD      varchar(30),
+        ACCTNUM     varchar(30),
+        TKNETAMT    varchar(30),
+        CLIID       varchar(30),
+        CLISTATCD   varchar(30),
+        VISID       varchar(30),
+        VISTYPECD   varchar(30),
+        Ctrl        varchar(30),
+        Cli         varchar(30)
+    );
+
+    define operator file_reader
+    type dataconnector producer
+    schema ventes_schema
+    attributes
+    (
+        varchar FileName = 'private.csv',
+        varchar Format = 'delimited',
+        varchar TextDelimiter = ';'
+    );
+
+    define operator load_private
+    type load
+    schema ventes_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar TargetTable = 'PRDW.Private',
+        varchar LogTable = 'PRDW.Log_Private'
+    );
+
+    apply ('insert into PRDW.Private(
+            LOCID, TPVID, TKNUM, TKDT, TKHR, PAYMCD, ACCTNUM, TKNETAMT, CLIID,
+            CLISTATCD, VISID, VISTYPECD, Ctrl, Cli)
+        values (:locid, :tpvid, :tknum, :tkdt, :tkhr, :paymcd, :acctnum,
+                :tknetamt, :cliid, clistatcd, :visid, :vistypecd, :ctrl,
+                :cli);')
+    to operator (load_private[1])
+
+    select LOCID, TPVID, TKNUM, TKDT, TKHR, PAYMCD, ACCTNUM, TKNETAMT, CLIID,
+        CLISTATCD, VISID, VISTYPECD, Ctrl, Cli
+    from operator (file_reader[1]);
+);
