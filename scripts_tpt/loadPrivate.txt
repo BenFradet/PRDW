@@ -23,9 +23,11 @@ description 'Load private.csv to the Vente table'
     schema ventes_schema
     attributes
     (
-        varchar FileName = 'private.csv',
+        varchar FileName = 'fichier_csv/private.csv',
         varchar Format = 'delimited',
-        varchar TextDelimiter = ';'
+        varchar TextDelimiter = ';',
+        varchar SkipRowsEveryFile = 'Y',
+        integer SkipRows = 1
     );
 
     define operator load_private
