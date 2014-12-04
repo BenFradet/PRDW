@@ -27,7 +27,7 @@ description 'Load ventes.csv {3, 4, 5} to the ventes1 table'
         varchar FileList = 'Y',
         varchar FileName = 'ventesFileList.txt',
         varchar Format = 'delimited',
-        varchar TextDelimiter = ';'
+        varchar TextDelimiter = ';',
         varchar SkipRowsEveryFile = 'Y',
         varchar SkipRows = 1
     );
