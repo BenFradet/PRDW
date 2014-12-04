@@ -29,7 +29,7 @@ description 'Load ventes.csv {3, 4, 5} to the ventes1 table'
         varchar Format = 'delimited',
         varchar TextDelimiter = ';',
         varchar SkipRowsEveryFile = 'Y',
-        varchar SkipRows = 1
+        integer SkipRows = 1
     );
 
     define operator load_ventes
