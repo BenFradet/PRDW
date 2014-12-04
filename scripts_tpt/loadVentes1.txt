@@ -1,22 +1,22 @@
-define job load_ventes3_from_csv
-description 'Load ventes3.csv to the Vente table'
+define job load_ventes_from_csv
+description 'Load ventes.csv {3, 4, 5} to the ventes1 table'
 (
     define schema ventes_schema
     (
-        LocID       varchar(30),
-        TPVID       varchar(30),
-        TkNum       varchar(30),
-        TkDT        varchar(30),
-        TkHR        varchar(30),
-        VisID       varchar(30),
-        VisTypeCD   varchar(30),
-        CliID       varchar(30),
-        CliStatCD   varchar(30),
-        TklNetAmt   varchar(30),
-        Qty         varchar(30),
-        Mesure      varchar(30),
-        ItemID      varchar(30),
-        RemAmt      varchar(30)
+        LocID       varchar(50),
+        TPVID       varchar(50),
+        TkNum       varchar(50),
+        TkDT        varchar(50),
+        TkHR        varchar(50),
+        VisID       varchar(50),
+        VisTypeCD   varchar(50),
+        CliID       varchar(50),
+        CliStatCD   varchar(50),
+        TklNetAmt   varchar(50),
+        Qty         varchar(50),
+        Mesure      varchar(50),
+        ItemID      varchar(50),
+        RemAmt      varchar(50)
     );
 
     define operator file_reader
@@ -24,29 +24,32 @@ description 'Load ventes3.csv to the Vente table'
     schema ventes_schema
     attributes
     (
-        varchar FileName = 'ventes3.csv',
+        varchar FileList = 'Y',
+        varchar FileName = 'ventesFileList.txt',
         varchar Format = 'delimited',
         varchar TextDelimiter = ';'
+        varchar SkipRowsEveryFile = 'Y',
+        varchar SkipRows = 1
     );
 
-    define operator load_ventes3
+    define operator load_ventes
     type load
     schema ventes_schema
     attributes
     (
-        varchar UserName = 'dbc',
-        varchar UserPassword = 'dbc',
-        varchar TargetTable = 'PRDW.Vente',
-        varchar LogTable = 'PRDW.Log_Ventes'
+        varchar UserName = 'prdw_reader_stg',
+        varchar UserPassword = 'prdw_reader_stg',
+        varchar TargetTable = 'DB_PRDW_STG.ventes1',
+        varchar LogTable = 'PRDW.log_ventes1'
     );
 
-    apply ('insert into PRDW.Vente(
+    apply ('insert into DB_PRDW_STG.ventes1(
             LocID, TPVID, TkNum, TkDT, TkHR, VisID, VisTypeCD, CliID, CliStatCD,
             TklNetAmt, Qty, Mesure, ItemID, RemAmt)
         values (:locid, :tpvid, :tknum, :tkdt, :tkhr, :visid, :vistypecd,
                 :cliid, :clistatcd, :tklnetamt, :qty, :mesure, :itemid,
                 :remamt);')
-    to operator (load_ventes3[1])
+    to operator (load_ventes[1])
 
     select LocID, TPVID, TkNum, TkDT, TkHR, VisID, VisTypeCD, CliID, CliStatCD,
         TklNetAmt, Qty, Mesure, ItemID, RemAmt
