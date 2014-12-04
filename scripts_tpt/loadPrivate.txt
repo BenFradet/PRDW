@@ -23,7 +23,7 @@ description 'Load private.csv to the Vente table'
     schema ventes_schema
     attributes
     (
-        varchar FileName = 'fichier_csv/private.csv',
+        varchar FileName = 'fichiers_csv/private.csv',
         varchar Format = 'delimited',
         varchar TextDelimiter = ';',
         varchar SkipRowsEveryFile = 'Y',
