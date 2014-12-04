@@ -43,7 +43,7 @@ description 'Load private.csv to the Vente table'
             LOCID, TPVID, TKNUM, TKDT, TKHR, PAYMCD, ACCTNUM, TKNETAMT, CLIID,
             CLISTATCD, VISID, VISTYPECD, CtrlCli)
         values (:locid, :tpvid, :tknum, :tkdt, :tkhr, :paymcd, :acctnum,
-                :tknetamt, :cliid, clistatcd, :visid, :vistypecd, :ctrlcli);')
+                :tknetamt, :cliid, :clistatcd, :visid, :vistypecd, :ctrlcli);')
     to operator (load_private[1])
 
     select LOCID, TPVID, TKNUM, TKDT, TKHR, PAYMCD, ACCTNUM, TKNETAMT, CLIID,
