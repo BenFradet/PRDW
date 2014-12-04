@@ -3,20 +3,19 @@ description 'Load private.csv to the Vente table'
 (
     define schema ventes_schema
     (
-        LOCID       varchar(30),
-        TPVID       varchar(30),
-        TKNUM       varchar(30),
-        TKDT        varchar(30),
-        TKHR        varchar(30),
-        PAYMCD      varchar(30),
-        ACCTNUM     varchar(30),
-        TKNETAMT    varchar(30),
-        CLIID       varchar(30),
-        CLISTATCD   varchar(30),
-        VISID       varchar(30),
-        VISTYPECD   varchar(30),
-        Ctrl        varchar(30),
-        Cli         varchar(30)
+        LOCID       varchar(50),
+        TPVID       varchar(50),
+        TKNUM       varchar(50),
+        TKDT        varchar(50),
+        TKHR        varchar(50),
+        PAYMCD      varchar(50),
+        ACCTNUM     varchar(50),
+        TKNETAMT    varchar(50),
+        CLIID       varchar(50),
+        CLISTATCD   varchar(50),
+        VISID       varchar(50),
+        VISTYPECD   varchar(50),
+        CtrlCli     varchar(50)
     );
 
     define operator file_reader
@@ -34,21 +33,20 @@ description 'Load private.csv to the Vente table'
     schema ventes_schema
     attributes
     (
-        varchar UserName = 'dbc',
-        varchar UserPassword = 'dbc',
-        varchar TargetTable = 'PRDW.Private',
-        varchar LogTable = 'PRDW.Log_Private'
+        varchar UserName = 'prdw_reader_stg',
+        varchar UserPassword = 'prdw_reader_stg',
+        varchar TargetTable = 'DB_PRDW_STG.ventes_private',
+        varchar LogTable = 'DB_PRDW_STG.log_private'
     );
 
-    apply ('insert into PRDW.Private(
+    apply ('insert into DB_PRDW_STG.ventes_private(
             LOCID, TPVID, TKNUM, TKDT, TKHR, PAYMCD, ACCTNUM, TKNETAMT, CLIID,
-            CLISTATCD, VISID, VISTYPECD, Ctrl, Cli)
+            CLISTATCD, VISID, VISTYPECD, CtrlCli)
         values (:locid, :tpvid, :tknum, :tkdt, :tkhr, :paymcd, :acctnum,
-                :tknetamt, :cliid, clistatcd, :visid, :vistypecd, :ctrl,
-                :cli);')
+                :tknetamt, :cliid, clistatcd, :visid, :vistypecd, :ctrlcli);')
     to operator (load_private[1])
 
     select LOCID, TPVID, TKNUM, TKDT, TKHR, PAYMCD, ACCTNUM, TKNETAMT, CLIID,
-        CLISTATCD, VISID, VISTYPECD, Ctrl, Cli
+        CLISTATCD, VISID, VISTYPECD, CtrlCli
     from operator (file_reader[1]);
 );
