@@ -40,7 +40,7 @@ description 'Load ventes.csv {3, 4, 5} to the ventes1 table'
         varchar UserName = 'prdw_reader_stg',
         varchar UserPassword = 'prdw_reader_stg',
         varchar TargetTable = 'DB_PRDW_STG.ventes1',
-        varchar LogTable = 'PRDW.log_ventes1'
+        varchar LogTable = 'DB_PRDW_STG.log_ventes1'
     );
 
     apply ('insert into DB_PRDW_STG.ventes1(
