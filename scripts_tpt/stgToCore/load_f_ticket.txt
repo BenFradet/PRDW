@@ -1,5 +1,5 @@
-define job load_ventes_from_ventes1
-description 'Load stg.ventes1 to core.ventes1 table'
+define job load_f_ticket_from_ventes1
+description 'Load stg.ventes1 to core.f_ticket table'
 (
     define schema ventes_schema
     (
