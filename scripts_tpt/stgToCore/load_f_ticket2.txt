@@ -1,0 +1,61 @@
+define job load_f_ticket_from_ventes_private
+description 'Load stg.ventes_private to core.f_ticket table'
+(
+    define schema ventes_schema
+    (
+        LOCID       numeric,
+        TPVID       varchar(50),
+        TKNUM       numeric,
+        TKDT        date,
+        TkHR        time,
+        PAYMCD      integer,
+        ACCTNUM     integer,
+        TKNETAMT    decimal,
+        CLIID       integer,
+        CLISTATCD   varchar(50),
+        VISID       varchar(50),
+        VISTYPECD   varchar(50),
+        CtrlCli     varchar(50)
+    );
+
+    define operator export_ventes
+    type export
+    schema ventes_schema
+    attributes
+    (
+        varchar UserName = 'prdw_reader_stg',
+        varchar UserPassword = 'prdw_reader_stg',
+        varchar SelectSmt = 'select unique
+                                cast(TKNUM as integer),
+                                cast(LOCID as integer),
+                                cast(PAYMCD as integer),
+                                cast(CLIID as integer),
+                                cast(TKDT as date format ''MM/DD/YY''),
+                                cast(TKHR as time format ''99:99:99''),
+                                cast(TKNETAMT as decimal)
+                             from DB_PRDW_STG.ventes_private
+                             where
+                                TKDT like ''%31/12/13%'' and
+                                TKHR like ''%24:60:60%'';'
+    );
+
+    define operator load_ventes
+    type load
+    schema ventes_schema
+    attributes
+    (
+        varchar UserName = 'prdw_reader_core',
+        varchar UserPassword = 'prdw_reader_core',
+        varchar TargetTable = 'DB_PRDW_CORE.f_ticket',
+        varchar LogTable = 'DB_PRDW_CORE.log_f_ticket'
+    );
+
+    apply ('insert into DB_PRDW_CORE.f_ticket(
+            num_ticket, id_magasin, moyen_paiement, id_client, dt_ticket,
+            heure, prix_total)
+        values (:tknum, :locid, :paymcd, :cliid, :tkdt, :tkhr, :tknetamt);')
+    to operator (load_ventes[1])
+
+    select TKNUM, LOCID, PAYMCD, CLIID, TKDT, TKHR, TKNETAMT
+    from operator (file_reader[1]);
+);
