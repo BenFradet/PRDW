@@ -1,0 +1,55 @@
+define job load_f_ticket_detail_from_ventes1
+description 'Load stg.ventes1 to the core.f_ticket_detail table'
+(
+    define schema ventes_schema
+    (
+        LocID       numeric,
+        TPVID       varchar(50),
+        TkNum       numeric,
+        TkDT        date,
+        TkHR        time,
+        VisID       varchar(50),
+        VisTypeCD   varchar(50),
+        CliID       integer,
+        CliStatCD   varchar(50),
+        TklNetAmt   decimal,
+        Qty         integer,
+        Mesure      varchar(50),
+        ItemID      varchar(13),
+        RemAmt      varchar(50)
+    );
+
+    define operator export_ventes
+    type export
+    schema ventes_schema
+    attributes
+    (
+        varchar UserName = 'prdw_reader_stg',
+        varchar UserPassword = 'prdw_reader_stg',
+        varchar SelectSmt = 'select
+                                cast(TkNum as integer),
+                                ItemID,
+                                cast(Qty as integer),
+                                cast(TklNetAmt as decimal)
+                             from DB_PRDW_STG.ventes1;'
+    );
+
+    define operator load_ventes
+    type load
+    schema ventes_schema
+    attributes
+    (
+        varchar UserName = 'prdw_reader_core',
+        varchar UserPassword = 'prdw_reader_core',
+        varchar TargetTable = 'DB_PRDW_CORE.f_ticket_detail',
+        varchar LogTable = 'DB_PRDW_CORE.log_f_ticket_detail'
+    );
+
+    apply ('insert into DB_PRDW_CORE.f_ticket_detail(
+            num_ticket, cd_produit, quantite, prix)
+        values (:tknum, :itemid, :qty, :tklnetamt);')
+    to operator (load_ventes[1])
+
+    select TkNum, ItemID, Qty, TklNetAmt
+    from operator (file_reader[1]);
+);
