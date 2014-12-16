@@ -22,15 +22,19 @@ description 'Load stg.ventes_private to core.f_ticket table'
         varchar SelectSmt = 'select unique
                                 cast(TKNUM as integer),
                                 cast(LOCID as integer),
-                                cast(PAYMCD as integer),
-                                cast(CLIID as integer),
-                                cast(TKDT as date format ''MM/DD/YY''),
-                                cast(TKHR as time format ''99:99:99''),
-                                cast(TKNETAMT as decimal)
+                                cast(PAYMCD as char(2)),
+                                CLIID as integer,
+                                cast(TKDT as date format ''DD/MM/YY'') +
+                                    interval '100' year,
+                                cast(TKHR as time format ''HH:MI:SS''),
+                                cast(TKNETAMT as number)
                              from DB_PRDW_STG.ventes_private
                              where
-                                TKDT like ''%31/12/13%'' and
-                                TKHR like ''%24:60:60%'';'
+                                regexp_similar(TKDT,
+                                    '[0-9]{2}/[0-9]{2}/[0-9]{2}', 'c') = 1 and
+                                regexp_similar(TKHR
+                                    '[0-9]{2}:[0-9]{2}:[0-9]{2}', 'c') = 1 and
+                                CLISTATCD <> '0';'
     );
 
     define operator load_ventes
