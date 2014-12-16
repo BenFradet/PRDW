@@ -3,19 +3,13 @@ description 'Load stg.ventes_private to core.f_ticket table'
 (
     define schema ventes_schema
     (
-        LOCID       numeric,
-        TPVID       varchar(50),
         TKNUM       numeric,
-        TKDT        date,
-        TkHR        time,
+        LOCID       numeric,
         PAYMCD      integer,
-        ACCTNUM     integer,
-        TKNETAMT    decimal,
         CLIID       integer,
-        CLISTATCD   varchar(50),
-        VISID       varchar(50),
-        VISTYPECD   varchar(50),
-        CtrlCli     varchar(50)
+        TKDT        intdate,
+        TKHR        inttime,
+        TKNETAMT    decimal,
     );
 
     define operator export_ventes
@@ -23,8 +17,8 @@ description 'Load stg.ventes_private to core.f_ticket table'
     schema ventes_schema
     attributes
     (
-        varchar UserName = 'prdw_reader_stg',
-        varchar UserPassword = 'prdw_reader_stg',
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
         varchar SelectSmt = 'select unique
                                 cast(TKNUM as integer),
                                 cast(LOCID as integer),
@@ -44,8 +38,8 @@ description 'Load stg.ventes_private to core.f_ticket table'
     schema ventes_schema
     attributes
     (
-        varchar UserName = 'prdw_reader_core',
-        varchar UserPassword = 'prdw_reader_core',
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
         varchar TargetTable = 'DB_PRDW_CORE.f_ticket',
         varchar LogTable = 'DB_PRDW_CORE.log_f_ticket'
     );
@@ -57,5 +51,5 @@ description 'Load stg.ventes_private to core.f_ticket table'
     to operator (load_ventes[1])
 
     select TKNUM, LOCID, PAYMCD, CLIID, TKDT, TKHR, TKNETAMT
-    from operator (file_reader[1]);
+    from operator (export_ventes[1]);
 );
