@@ -17,13 +17,13 @@ description 'Load stg.ventes1 to the core.f_ticket_detail table'
     (
         varchar UserName = 'dbc',
         varchar UserPassword = 'dbc',
-        varchar SelectSmt = 'select
-                                cast(TkNum as integer),
+        varchar SelectStmt = 'select
+                                cast(TkNum as decimal),
                                 cast(TklNetAmt as decimal),
                                 cast(Qty as integer),
-                                cast(TkDt as data format ''DD/MM/YY'') +
-                                    interval '100' year,
-                                cast(ItemID as varchar(13))
+                                cast(ItemID as varchar(13)),
+                                cast(TkDt as date format ''DD/MM/YY'') +
+                                    interval ''100'' year
                              from DB_PRDW_STG.ventes1
                              where regexp_similar(TkDt,
                                 ''[0-9]{2}/[0-9]{2}/[0-9]{2}'', ''c'') = 1;'
