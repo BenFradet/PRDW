@@ -1,13 +1,15 @@
 insert into DB_PRDW_CORE.f_ticket (
     num_ticket,
     id_magasin,
-    moyen_paiement
+    moyen_paiement,
+    id_client
 )
-select distinct (
-    num_ticket,
+select
+    distinct num_ticket,
     12,
+    1,
     1
-) from DB_PRDW_CORE.f_ticket_detail;
+from DB_PRDW_CORE.f_ticket_detail;
 
 update DB_PRDW_CORE.f_ticket
 set prix_total = (
