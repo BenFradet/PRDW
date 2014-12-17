@@ -26,7 +26,8 @@ description 'Load stg.ventes1 to the core.f_ticket_detail table'
                                     interval ''100'' year
                              from DB_PRDW_STG.ventes1
                              where regexp_similar(TkDt,
-                                ''[0-9]{2}/[0-9]{2}/[0-9]{2}'', ''c'') = 1;'
+                                ''[0-9]{2}/[0-9]{2}/[0-9]{2}'', ''c'') = 1 and
+                                cast(TklNetAmt as decimal) < 100;'
     );
 
     define operator load_ventes
