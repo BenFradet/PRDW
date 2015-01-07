@@ -1,0 +1,50 @@
+define job load_d_produit_sous_fami
+description 'Load stg.sous_famille to the core.d_produit_sous_fami table'
+(
+    define schema sous_fami_schema
+    (
+        FamID       numeric,
+        SSFamID     numeric,
+        SSFamLC     varchar(50),
+        SSFamLL     varchar(50),
+        SSFamDF     intdate
+    );
+
+    define operator export_sous_fami
+    type export
+    schema sous_fami_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar SelectStmt = 'select
+                                cast(FamID as numeric),
+                                cast(SSFamID as numeric),
+                                cast(SSFamLC as varchar(50)),
+                                cast(SSFamLL as varchar(50)),
+                                cast(SSFamDF as date format ''DD/MM/YY'') +
+                                    interval ''100'' year
+                             from DB_PRDW_STG.sous_famille
+                             where regexp_similar(SSFamDF,
+                                ''[0-9]{2}/[0-9]{2}/[0-9]{2}'', ''c'') = 1;'
+    );
+
+    define operator load_sous_fami
+    type load
+    schema sous_fami_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar TargetTable = 'DB_PRDW_CORE.d_produit_sous_fami',
+        varchar LogTable = 'DB_PRDW_CORE.log_d_produit_sous_fami'
+    );
+
+    apply ('insert into DB_PRDW_CORE.d_produit_sous_fami(
+            id_famille, id_sous_famille, desc_sous_famille)
+        values (:famid, :ssfamid, :ssfamll);')
+    to operator (load_sous_fami[1])
+
+    select FamID, SSFamID, SSFamLL
+    from operator (export_sous_fami[1]);
+);
