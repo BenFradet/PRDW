@@ -1,0 +1,44 @@
+define job load_familles_from_csv
+description 'Load familles.csv to the famille table'
+(
+    define schema famille_schema
+    (
+        FamID       varchar(50),
+        FamLC       varchar(50),
+        FamLL       varchar(50),
+        FamDD       varchar(50),
+        FamDF       varchar(50),
+        RAY         varchar(50)
+    );
+
+    define operator file_reader
+    type dataconnector producer
+    schema famille_schema
+    attributes
+    (
+        varchar FileName = 'fichiers_csv/familles.csv',
+        varchar Format = 'delimited',
+        varchar TextDelimiter = ';',
+        varchar SkipRowsEveryFile = 'Y',
+        integer SkipRows = 1
+    );
+
+    define operator load_famille
+    type load
+    schema famille_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar TargetTable = 'DB_PRDW_STG.famille',
+        varchar LogTable = 'DB_PRDW_STG.famille'
+    );
+
+    apply ('insert into DB_PRDW_STG.famille(
+            FamID, FamLC, FamLL, FamDD, FamDF, RAY)
+        values (:famid, :famlc, :famll, :famdd, :famdf, :ray);')
+    to operator (load_famille[1])
+
+    select FamID, FamLC, FamLL, FamDD, FamDF, RAY
+    from operator (file_reader[1]);
+);
