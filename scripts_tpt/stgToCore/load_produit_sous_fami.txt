@@ -3,8 +3,8 @@ description 'Load stg.sous_famille to the core.d_produit_sous_fami table'
 (
     define schema sous_fami_schema
     (
-        FamID       numeric,
-        SSFamID     numeric,
+        FamID       integer,
+        SSFamID     integer,
         SSFamLC     varchar(50),
         SSFamLL     varchar(50),
         SSFamDF     intdate
@@ -18,8 +18,8 @@ description 'Load stg.sous_famille to the core.d_produit_sous_fami table'
         varchar UserName = 'dbc',
         varchar UserPassword = 'dbc',
         varchar SelectStmt = 'select
-                                cast(FamID as numeric),
-                                cast(SSFamID as numeric),
+                                cast(FamID as integer),
+                                cast(SSFamID as integer),
                                 cast(SSFamLC as varchar(50)),
                                 cast(SSFamLL as varchar(50)),
                                 cast(SSFamDF as date format ''DD/MM/YY'') +

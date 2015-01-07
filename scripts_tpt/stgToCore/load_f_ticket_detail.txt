@@ -3,7 +3,7 @@ description 'Load stg.ventes1 to the core.f_ticket_detail table'
 (
     define schema ventes_schema
     (
-        TkNum       numeric,
+        TkNum       integer,
         TklNetAmt   decimal,
         Qty         integer,
         TkDt        intdate,
@@ -18,7 +18,7 @@ description 'Load stg.ventes1 to the core.f_ticket_detail table'
         varchar UserName = 'dbc',
         varchar UserPassword = 'dbc',
         varchar SelectStmt = 'select
-                                cast(TkNum as decimal),
+                                cast(TkNum as integer),
                                 cast(TklNetAmt as decimal),
                                 cast(Qty as integer),
                                 cast(ItemID as varchar(13)),
