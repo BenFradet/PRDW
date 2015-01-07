@@ -1,0 +1,51 @@
+define job load_d_produit_sous_fami
+description 'Load stg.famille to the core.d_produit_famille table'
+(
+    define schema famille_schema
+    (
+        FamID       integer,
+        FamLC       varchar(50),
+        FamLL       varchar(50),
+        FamDD       intdate,
+        FamDF       intdate,
+        RAY         integer
+    );
+
+    define operator export_famille
+    type export
+    schema famille_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar SelectStmt = 'select
+                                cast(FamID as integer),
+                                cast(FamLC as varchar(50)),
+                                cast(FamLL as varchar(50)),
+                                cast(FamDD as date format ''DD/MM/YY'') +
+                                    interval ''100'' year,
+                                cast(FamDF as date format ''DD/MM/YY'') +
+                                    interval ''100'' year,
+                                cast(RAY as integer)
+                             from DB_PRDW_STG.famille;'
+    );
+
+    define operator load_famille
+    type load
+    schema famille_schema
+    attributes
+    (
+        varchar UserName = 'dbc',
+        varchar UserPassword = 'dbc',
+        varchar TargetTable = 'DB_PRDW_CORE.d_produit_famille',
+        varchar LogTable = 'DB_PRDW_CORE.log_d_produit_famille'
+    );
+
+    apply ('insert into DB_PRDW_CORE.d_produit_famille(
+            id_rayon, id_famille, desc_famille)
+        values (:ray, :famid, :famll);')
+    to operator (load_famille[1])
+
+    select RAY, FamID, FamLL
+    from operator (export_famille[1]);
+);
