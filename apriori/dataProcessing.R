@@ -13,9 +13,14 @@ colnames(data) <- c('transaction_id', 'item_id')
 data <- as.data.frame(apply(data, 2, function(x) gsub('^\\s+|\\s+$', '', x)))
 
 # removes useless items
-data <- subset(data, item_id != 'AUTRES' & item_id != 'ACCESSOIRES' &
-               item_id != 'SUPP' & item_id != 'H.S' & item_id != 'DIVERS' &
-               item_id != 'H.S.' & item_id != 'SUP' & item_id != '***' &
-               item_id != 'HS')
+data <- subset(data, item_id != 'AUTRES' & item_id != '***' &
+               item_id != 'SUPP' & item_id != 'SUP' & item_id != 'DIVERS' &
+               item_id != 'H.S.' & item_id != 'H.S' & item_id != 'HS' &
+               item_id != 'CODIF ADMIN LR R10' &
+               item_id != 'CODIF ADMIN LR R25' &
+               item_id != 'CODIF ADMIN LR R28' &
+               item_id != 'POIGNEES SOUPLES' &
+               item_id != 'EMBALLAGE' &
+               item_id != 'PET -PVC' & item_id != 'PET - PVC')
 
 write.csv(data, 'processedResult.csv', sep = ',', row.names = F)
